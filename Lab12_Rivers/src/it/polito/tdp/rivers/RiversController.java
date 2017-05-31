@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 
 import it.polito.tdp.rivers.model.Model;
 import it.polito.tdp.rivers.model.River;
+import it.polito.tdp.rivers.model.Statistiche;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -50,14 +51,14 @@ public class RiversController {
     @FXML
     void doCompila(ActionEvent event) {
     	if(boxRiver.getValue()!=null){
-    		float sum=model.getFlows(boxRiver.getValue());
+    		float media=model.getMediaFlows(boxRiver.getValue());
     		LocalDate first=boxRiver.getValue().getFlows().get(0).getDay();
     		int tot=boxRiver.getValue().getFlows().size();
     		
     		txtStartDate.appendText(first.toString());
     		txtEndDate.appendText(boxRiver.getValue().getFlows().get(tot-1).getDay().toString());
     		txtNumMeasurements.appendText(Integer.toString(tot));
-    		txtFMed.appendText(Float.toString(sum/tot));
+    		txtFMed.appendText(Float.toString(media));
     	}
     	else
     		txtResult.appendText("Inserire un fiume!");
@@ -65,7 +66,28 @@ public class RiversController {
 
     @FXML
     void doSimula(ActionEvent event) {
-
+    	if(boxRiver.getValue()!=null){
+    		try{
+    		int k=Integer.parseInt(txtK.getText());
+    		Statistiche st=model.startSimulazione(k, boxRiver.getValue());
+    		
+    		
+    		txtResult.appendText("Il numero di giorni in cui non si è potuta garantire l'erogazione è "+Integer.toString(st.getNrGiorniInsoddisfatti())+"\n");
+    		float occMedia= (float) (st.getOccupazioneTot()/st.getTotIngressi());
+    		txtResult.appendText("Occupazione media nel corso della simulazione "+Float.toString(occMedia)+"\n");
+    		
+    		
+    		
+    		
+    		}
+    		catch(Exception e){
+    			txtResult.appendText("Inserire un numero!\n");
+    		}
+    	
+    	}
+    	else{
+    		txtResult.appendText("Inserire fiume!\n");
+    	}
     }
 
     @FXML

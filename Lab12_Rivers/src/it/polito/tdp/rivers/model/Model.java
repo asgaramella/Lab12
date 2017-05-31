@@ -9,12 +9,14 @@ public class Model {
 	private RiverIdMap riverIdMap;
 	private FlowIdMap flowIdMap;
 	private List<River> rivers;
+	private Simulator sim;
 
 	public Model() {
 		super();
 		riverIdMap=new RiverIdMap();
 		flowIdMap=new FlowIdMap();
 	}
+
 	
 	
 	public List<River> getAllRivers(){
@@ -28,17 +30,27 @@ public class Model {
 	}
 	
 	
-	public float getFlows(River r){
+	public float getMediaFlows(River r){
 		float sum=0;
+		if(r.getFlows().isEmpty()){
 		RiversDAO dao=new RiversDAO();
 		dao.getFlowsofRiver(r,flowIdMap);
+		}
 		for( Flow ftemp: r.getFlows()){
 			sum+=ftemp.getFlow();
 		}
-		return sum;
+		return sum/r.getFlows().size();
 		
 	}
 	
+	
+	public Statistiche startSimulazione(int k, River r){
+		
+		float media=this.getMediaFlows(r);
+		sim=new Simulator(k,media,r);
+		sim.run();
+		return sim.getSt();
+	}
 	
 	
 	
